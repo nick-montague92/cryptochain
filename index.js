@@ -6,7 +6,7 @@ const Blockchain = require ('./blockchain');
 const PubSub = require('./app/pubsub');
 const TransactionPool = require('./wallet/transaction-pool');
 const Wallet = require('./wallet');
-const TransactionMiner = require('./app/transaction-Miner');
+const TransactionMiner = require('./app/transaction-miner');
 
 const isDevelopment = process.env.ENV === 'development';
 
@@ -129,21 +129,22 @@ const walletBarAction = () => generateWalletTransaction({
   wallet: walletBar, recipient: wallet.publicKey, amount: 15
 });
 
-// for (let i=0; i<10; i++) {
-//   if (i%3 === 0) {
-//     walletAction();
-//     walletFooAction();
-//   } else if (i%3 === 1) {
-//     walletAction();
-//     walletBarAction();
-//   } else {
-//     walletFooAction();
-//     walletBarAction();
-//   }
-//
-//   transactionMiner.mineTransactions();
-// }
+if (isDevelopment) {
+  for (let i=0; i<10; i++) {
+    if (i%3 === 0) {
+      walletAction();
+      walletFooAction();
+    } else if (i%3 === 1) {
+      walletAction();
+      walletBarAction();
+    } else {
+      walletFooAction();
+      walletBarAction();
+    }
 
+    transactionMiner.mineTransactions();
+  }
+}
 let PEER_PORT;
 
 if (process.env.GENERATE_PEER_PORT === 'true') {
@@ -151,7 +152,7 @@ if (process.env.GENERATE_PEER_PORT === 'true') {
 }
 
 
-const PORT = PEER_PORT || DEFAULT_PORT;
+const PORT = process.env.PORT || PEER_PORT || DEFAULT_PORT;
 app.listen(PORT, () => {
   console.log(`Listening at localhost:${PORT}`);
   if (PORT !== DEFAULT_PORT) {
